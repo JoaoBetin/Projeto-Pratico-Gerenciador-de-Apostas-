@@ -61,7 +61,6 @@ public class UsuariosPanel extends JPanel {
             JOptionPane.showMessageDialog(this, "Limite de usuários atingido."); return;
         }
 
-        // Verifica email duplicado
         for (int i = 0; i < MainFrame.totalParticipantes; i++) {
             if (MainFrame.participantes[i].getEmail().equalsIgnoreCase(email)) {
                 JOptionPane.showMessageDialog(this, "Email já cadastrado."); return;

@@ -1,6 +1,5 @@
 package model.CampeonatoModel;
 
-import model.PessoaModel.Aposta;
 import model.PessoaModel.Grupo;
 import model.PessoaModel.Participante;
 
@@ -18,16 +17,6 @@ public class Classificacao {
         this.grupo = grupo;
         this.partidas = partidas;
         this.totalPartidas = totalPartidas;
-    }
-
-    public void calcularPontuacaoGeral(Aposta[] apostas, int totalApostas) {
-        for (int i = 0; i < totalApostas; i++) {
-            Aposta aposta = apostas[i];
-            if (aposta.getPartida().isEncerrada()) {
-                int pontos = aposta.calcularPontos(aposta.getPartida());
-                aposta.getParticipante().setPontuacao(pontos);
-            }
-        }
     }
 
     public Participante[] gerarRanking() {
@@ -60,8 +49,6 @@ public class Classificacao {
         }
         return sb.toString();
     }
-
-    public Grupo getGrupo() { return grupo; }
 
     @Override
     public String toString() {

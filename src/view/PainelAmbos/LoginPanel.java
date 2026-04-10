@@ -53,7 +53,6 @@ public class LoginPanel extends JPanel {
             return;
         }
 
-        // Verifica administradores
         for (Administrador admin : MainFrame.administradores) {
             if (admin != null && admin.autenticar(email, senha)) {
                 frame.onLogin(admin);
@@ -61,7 +60,6 @@ public class LoginPanel extends JPanel {
             }
         }
 
-        // Verifica participantes cadastrados globalmente
         for (int i = 0; i < MainFrame.totalParticipantes; i++) {
             Participante p = MainFrame.participantes[i];
             if (p.autenticar(email, senha)) {

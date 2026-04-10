@@ -20,7 +20,6 @@ public class CampeonatoPanel extends JPanel {
     public CampeonatoPanel() {
         setLayout(new BorderLayout(10, 10));
 
-        // Criar campeonato
         JPanel formCamp = new JPanel(new FlowLayout(FlowLayout.LEFT));
         formCamp.setBorder(BorderFactory.createTitledBorder("Campeonato"));
         campoNome = new JTextField(20);
@@ -28,7 +27,6 @@ public class CampeonatoPanel extends JPanel {
         formCamp.add(new JLabel("Nome:")); formCamp.add(campoNome);
         formCamp.add(btnCriar);
 
-        // Selecionar campeonato para cadastrar partida
         JPanel formPartida = new JPanel(new GridBagLayout());
         formPartida.setBorder(BorderFactory.createTitledBorder("Cadastrar Partida"));
         GridBagConstraints g = new GridBagConstraints();

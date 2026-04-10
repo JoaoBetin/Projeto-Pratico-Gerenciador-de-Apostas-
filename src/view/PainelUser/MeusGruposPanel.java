@@ -80,7 +80,6 @@ public class MeusGruposPanel extends JPanel {
         }
 
         listaMeusModel.addElement(grupo.getNome());
-        // Atualiza o item na lista para refletir o novo total
         listaTodosModel.set(listaTodos.getSelectedIndex(),
                 idx + " — " + grupo.getNome()
                         + " (" + grupo.getTotalParticipantes() + "/5)");

@@ -49,18 +49,6 @@ public class Aposta implements Pontuavel {
         return partida;
     }
 
-    public String getResultadoPrevisto() {
-        return resultadoPrevisto;
-    }
-
-    public int getGolsMandantePrevisto() {
-        return golsMandantePrevisto;
-    }
-
-    public int getGolsVisitantePrevisto() {
-        return golsVisitantePrevisto;
-    }
-
     @Override
     public String toString() {
         return participante.getNome() + " apostou: " +
