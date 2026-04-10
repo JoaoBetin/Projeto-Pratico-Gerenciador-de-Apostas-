@@ -28,24 +28,8 @@ public abstract class Pessoa {
         return email;
     }
 
-    public Permissao getPermissao() {
-        return permissao;
-    }
-
     public void setPermissao(Permissao permissao) {
         this.permissao = permissao;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getSenha() {
-        return senha;
-    }
-
-    public void setSenha(String senha) {
-        this.senha = senha;
     }
 
     public boolean isAdministrador(){
