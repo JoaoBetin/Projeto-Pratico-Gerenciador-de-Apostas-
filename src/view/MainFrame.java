@@ -49,6 +49,11 @@ public class MainFrame extends JFrame {
     public void onLogin(Pessoa pessoa) {
         usuarioLogado = pessoa;
 
+        // Desabilita TODAS as abas protegidas antes de qualquer coisa
+        for (int i = 1; i < abas.getTabCount(); i++) {
+            abas.setEnabledAt(i, false);
+        }
+
         // Habilita abas comuns a todos
         abas.setEnabledAt(1, true); // Clubes
         abas.setEnabledAt(2, true); // Campeonato
@@ -61,7 +66,7 @@ public class MainFrame extends JFrame {
             abas.setEnabledAt(4, true); // Apostas — só usuário
         }
 
-        abas.setSelectedIndex(1); // vai direto para Clubes
+        abas.setSelectedIndex(1);
     }
 
     public static void main(String[] args) {

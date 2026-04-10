@@ -32,6 +32,7 @@ public class Partida {
     }
 
     public boolean aceitaAposta() {
+        if (encerrada) return false;  // ← linha nova
         return LocalDateTime.now().isBefore(dataHora.minusMinutes(20));
     }
 
