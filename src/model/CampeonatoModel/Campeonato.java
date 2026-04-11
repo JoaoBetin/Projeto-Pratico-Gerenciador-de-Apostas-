@@ -1,4 +1,4 @@
-package model;
+package model.CampeonatoModel;
 
 public class Campeonato {
     private String nome;
@@ -38,6 +38,14 @@ public class Campeonato {
     public void setNome(String nome)   { this.nome = nome; }
     public int getTotalClubes()        { return totalClubes; }
     public boolean estaLotado()        { return totalClubes >= 8; }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (!(obj instanceof Campeonato)) return false;
+        Campeonato outro = (Campeonato) obj;
+        return this.nome.equalsIgnoreCase(outro.nome);
+    }
 
     @Override
     public String toString() {

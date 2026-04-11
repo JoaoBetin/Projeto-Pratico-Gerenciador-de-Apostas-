@@ -1,17 +1,15 @@
-package model;
+package model.PessoaModel;
 
 public class Participante extends Pessoa {
 
     private int pontuacao;
 
-    // Construtor padrão
     public Participante() {
         super();
         setPermissao(Permissao.USUARIO);
         this.pontuacao = 0;
     }
 
-    // Construtor sobrecarregado — permissão já fixa como USUARIO
     public Participante(String nome, String email, String senha) {
         super(nome, email, senha, Permissao.USUARIO);
         this.pontuacao = 0;

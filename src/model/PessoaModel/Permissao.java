@@ -1,4 +1,4 @@
-package model;
+package model.PessoaModel;
 
 public enum Permissao {
     ADMINISTRADOR,

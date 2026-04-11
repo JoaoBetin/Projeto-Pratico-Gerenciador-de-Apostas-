@@ -1,6 +1,6 @@
 package interfaces;
 
-import model.Partida;
+import model.CampeonatoModel.Partida;
 
 public interface Pontuavel {
     int calcularPontos(Partida partida);

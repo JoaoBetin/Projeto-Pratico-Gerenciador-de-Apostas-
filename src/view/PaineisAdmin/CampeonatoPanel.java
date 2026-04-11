@@ -1,6 +1,10 @@
-package view;
+package view.PaineisAdmin;
 
-import model.*;
+import model.CampeonatoModel.Campeonato;
+import model.CampeonatoModel.Clube;
+import model.CampeonatoModel.Partida;
+import view.MainFrame;
+
 import javax.swing.*;
 import java.awt.*;
 import java.time.LocalDateTime;
@@ -8,6 +12,7 @@ import java.time.LocalDateTime;
 public class CampeonatoPanel extends JPanel {
 
     private JTextField campoNome;
+    private JComboBox<String> comboCampeonato;
     private JComboBox<String> comboMandante, comboVisitante;
     private JTextField campoData, campoHora;
     private DefaultListModel<String> listaModel;
@@ -15,7 +20,7 @@ public class CampeonatoPanel extends JPanel {
     public CampeonatoPanel() {
         setLayout(new BorderLayout(10, 10));
 
-        // Painel superior: nome do campeonato
+        // Criar campeonato
         JPanel formCamp = new JPanel(new FlowLayout(FlowLayout.LEFT));
         formCamp.setBorder(BorderFactory.createTitledBorder("Campeonato"));
         campoNome = new JTextField(20);
@@ -23,31 +28,44 @@ public class CampeonatoPanel extends JPanel {
         formCamp.add(new JLabel("Nome:")); formCamp.add(campoNome);
         formCamp.add(btnCriar);
 
-        // Painel central: cadastro de partidas
+        // Selecionar campeonato para cadastrar partida
         JPanel formPartida = new JPanel(new GridBagLayout());
         formPartida.setBorder(BorderFactory.createTitledBorder("Cadastrar Partida"));
         GridBagConstraints g = new GridBagConstraints();
         g.insets = new Insets(6, 6, 6, 6);
         g.fill = GridBagConstraints.HORIZONTAL;
 
-        comboMandante  = new JComboBox<>();
-        comboVisitante = new JComboBox<>();
-        campoData = new JTextField("dd/MM/yyyy", 10);
-        campoHora = new JTextField("HH:mm", 5);
+        comboCampeonato = new JComboBox<>();
+        comboMandante   = new JComboBox<>();
+        comboVisitante  = new JComboBox<>();
+        campoData       = new JTextField("dd/MM/yyyy", 10);
+        campoHora       = new JTextField("HH:mm", 5);
 
-        g.gridx=0;g.gridy=0; formPartida.add(new JLabel("Mandante:"),g);
-        g.gridx=1;           formPartida.add(comboMandante,g);
-        g.gridx=0;g.gridy=1; formPartida.add(new JLabel("Visitante:"),g);
-        g.gridx=1;           formPartida.add(comboVisitante,g);
-        g.gridx=0;g.gridy=2; formPartida.add(new JLabel("Data:"),g);
-        g.gridx=1;           formPartida.add(campoData,g);
-        g.gridx=0;g.gridy=3; formPartida.add(new JLabel("Hora:"),g);
-        g.gridx=1;           formPartida.add(campoHora,g);
+        JButton btnCarregarClubes = new JButton("Carregar clubes");
+
+        g.gridx=0;g.gridy=0; formPartida.add(new JLabel("Campeonato:"), g);
+        g.gridx=1;           formPartida.add(comboCampeonato, g);
+        g.gridx=2;           formPartida.add(btnCarregarClubes, g);
+
+        g.gridx=0;g.gridy=1; formPartida.add(new JLabel("Mandante:"), g);
+        g.gridx=1;g.gridwidth=2; formPartida.add(comboMandante, g);
+        g.gridwidth=1;
+
+        g.gridx=0;g.gridy=2; formPartida.add(new JLabel("Visitante:"), g);
+        g.gridx=1;g.gridwidth=2; formPartida.add(comboVisitante, g);
+        g.gridwidth=1;
+
+        g.gridx=0;g.gridy=3; formPartida.add(new JLabel("Data (dd/MM/yyyy):"), g);
+        g.gridx=1;g.gridwidth=2; formPartida.add(campoData, g);
+        g.gridwidth=1;
+
+        g.gridx=0;g.gridy=4; formPartida.add(new JLabel("Hora (HH:mm):"), g);
+        g.gridx=1;g.gridwidth=2; formPartida.add(campoHora, g);
+        g.gridwidth=1;
 
         JButton btnPartida = new JButton("Cadastrar Partida");
-        g.gridx=0;g.gridy=4;g.gridwidth=2; formPartida.add(btnPartida,g);
+        g.gridx=0;g.gridy=5;g.gridwidth=3; formPartida.add(btnPartida, g);
 
-        // Lista de partidas
         listaModel = new DefaultListModel<>();
         JList<String> lista = new JList<>(listaModel);
         JScrollPane scroll = new JScrollPane(lista);
@@ -61,31 +79,44 @@ public class CampeonatoPanel extends JPanel {
         add(centro, BorderLayout.CENTER);
 
         btnCriar.addActionListener(e -> criarCampeonato());
+        btnCarregarClubes.addActionListener(e -> carregarClubes());
         btnPartida.addActionListener(e -> cadastrarPartida());
     }
 
     private void criarCampeonato() {
         String nome = campoNome.getText().trim();
-        if (nome.isEmpty()) { JOptionPane.showMessageDialog(this,"Digite o nome."); return; }
-        MainFrame.campeonato = new Campeonato(nome);
-        // Popula os combos com os clubes já cadastrados
+        if (nome.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Digite o nome."); return;
+        }
+        if (MainFrame.totalCampeonatos >= 10) {
+            JOptionPane.showMessageDialog(this, "Limite de campeonatos atingido."); return;
+        }
+        Campeonato c = new Campeonato(nome);
+        MainFrame.campeonatos[MainFrame.totalCampeonatos++] = c;
+        comboCampeonato.addItem(nome);
+        campoNome.setText("");
+        JOptionPane.showMessageDialog(this, "Campeonato '" + nome + "' criado!");
+    }
+
+    private void carregarClubes() {
         comboMandante.removeAllItems();
         comboVisitante.removeAllItems();
         for (int i = 0; i < MainFrame.totalClubes; i++) {
             comboMandante.addItem(MainFrame.clubes[i].getSigla());
             comboVisitante.addItem(MainFrame.clubes[i].getSigla());
         }
-        JOptionPane.showMessageDialog(this, "Campeonato '" + nome + "' criado!");
     }
 
     private void cadastrarPartida() {
-        if (MainFrame.campeonato == null) {
-            JOptionPane.showMessageDialog(this, "Crie o campeonato primeiro."); return;
+        if (comboCampeonato.getSelectedItem() == null) {
+            JOptionPane.showMessageDialog(this, "Selecione um campeonato."); return;
         }
         if (comboMandante.getSelectedIndex() == comboVisitante.getSelectedIndex()) {
             JOptionPane.showMessageDialog(this, "Escolha clubes diferentes."); return;
         }
         try {
+            int idxCamp     = comboCampeonato.getSelectedIndex();
+            Campeonato camp = MainFrame.campeonatos[idxCamp];
             Clube mandante  = MainFrame.clubes[comboMandante.getSelectedIndex()];
             Clube visitante = MainFrame.clubes[comboVisitante.getSelectedIndex()];
 
@@ -97,11 +128,16 @@ public class CampeonatoPanel extends JPanel {
                     Integer.parseInt(partesHora[1])
             );
 
-            Partida p = new Partida(mandante, visitante, dt);
+            Partida p = new Partida(mandante, visitante, dt, camp);
             MainFrame.partidas[MainFrame.totalPartidas++] = p;
-            listaModel.addElement(p.toString() + " — " + campoData.getText() + " " + campoHora.getText());
+            listaModel.addElement("[" + camp.getNome() + "] " + p.toString()
+                    + " — " + campoData.getText() + " " + campoHora.getText());
+
+            campoData.setText("dd/MM/yyyy");
+            campoHora.setText("HH:mm");
         } catch (Exception ex) {
-            JOptionPane.showMessageDialog(this, "Data/hora inválida. Use dd/MM/yyyy e HH:mm.");
+            JOptionPane.showMessageDialog(this,
+                    "Data/hora inválida. Use dd/MM/yyyy e HH:mm.");
         }
     }
 }

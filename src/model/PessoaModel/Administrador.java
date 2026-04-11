@@ -1,6 +1,6 @@
-package model;
+package model.PessoaModel;
 
-public class Administrador extends Pessoa{
+public class Administrador extends Pessoa {
 
     public Administrador() {
         super();

@@ -1,6 +1,12 @@
-package view;
+package view.PainelAmbos;
 
-import model.*;
+import model.CampeonatoModel.*;
+import model.PessoaModel.*;
+import view.MainFrame;
+import view.PaineisAdmin.*;
+import view.PainelAmbos.*;
+import view.PainelUser.*;
+
 import javax.swing.*;
 import java.awt.*;
 
@@ -9,15 +15,6 @@ public class LoginPanel extends JPanel {
     private MainFrame frame;
     private JTextField campoEmail;
     private JPasswordField campoSenha;
-
-    // Usuários pré-cadastrados para teste
-    private Pessoa[] usuarios = {
-            new Administrador("Admin", "admin@admin.com", "1234"),
-            new Participante("João",   "joao@email.com",  "1234"),
-            new Participante("Maria",  "maria@email.com", "1234"),
-            new Participante("Pedro",  "pedro@email.com", "1234"),
-            new Participante("Ana",    "ana@email.com",   "1234")
-    };
 
     public LoginPanel(MainFrame frame) {
         this.frame = frame;
@@ -33,18 +30,16 @@ public class LoginPanel extends JPanel {
 
         g.gridwidth = 1;
         g.gridx = 0; g.gridy = 1; add(new JLabel("Email:"), g);
-        g.gridx = 1;               campoEmail = new JTextField(20); add(campoEmail, g);
+        g.gridx = 1; campoEmail = new JTextField(20); add(campoEmail, g);
 
         g.gridx = 0; g.gridy = 2; add(new JLabel("Senha:"), g);
-        g.gridx = 1;               campoSenha = new JPasswordField(20); add(campoSenha, g);
+        g.gridx = 1; campoSenha = new JPasswordField(20); add(campoSenha, g);
 
         JButton btnEntrar = new JButton("Entrar");
         g.gridx = 0; g.gridy = 3; g.gridwidth = 2;
         add(btnEntrar, g);
 
         btnEntrar.addActionListener(e -> fazerLogin());
-
-        // Permite login com Enter
         campoSenha.addActionListener(e -> fazerLogin());
     }
 
@@ -52,19 +47,29 @@ public class LoginPanel extends JPanel {
         String email = campoEmail.getText().trim();
         String senha = new String(campoSenha.getPassword());
 
-        for (Pessoa p : usuarios) {
+        if (email.isEmpty() || senha.isEmpty()) {
+            JOptionPane.showMessageDialog(this,
+                    "Preencha email e senha.", "Aviso", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        // Verifica administradores
+        for (Administrador admin : MainFrame.administradores) {
+            if (admin != null && admin.autenticar(email, senha)) {
+                frame.onLogin(admin);
+                return;
+            }
+        }
+
+        // Verifica participantes cadastrados globalmente
+        for (int i = 0; i < MainFrame.totalParticipantes; i++) {
+            Participante p = MainFrame.participantes[i];
             if (p.autenticar(email, senha)) {
-                // Popula participantes no grupo global
-                if (!p.isAdministrador()) {
-                    if (MainFrame.grupo == null) {
-                        MainFrame.grupo = new Grupo("Grupo Principal");
-                    }
-                    MainFrame.grupo.adicionarParticipante((Participante) p);
-                }
                 frame.onLogin(p);
                 return;
             }
         }
+
         JOptionPane.showMessageDialog(this,
                 "Email ou senha inválidos.", "Erro", JOptionPane.ERROR_MESSAGE);
     }

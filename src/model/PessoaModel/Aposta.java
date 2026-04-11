@@ -1,6 +1,7 @@
-package model;
+package model.PessoaModel;
 
 import interfaces.Pontuavel;
+import model.CampeonatoModel.Partida;
 
 public class Aposta implements Pontuavel {
     private Participante participante;
@@ -32,8 +33,7 @@ public class Aposta implements Pontuavel {
 
         boolean acertouResultado = resultadoPrevisto.equals(partida.getResultado());
         boolean acertouPlacar =
-                golsMandantePrevisto == partida.getGolsCasa() &&
-                        golsVisitantePrevisto == partida.getGolsFora();
+                golsMandantePrevisto == partida.getGolsMandante() && golsVisitantePrevisto == partida.getGolsVisitante();
 
         if (acertouPlacar)    return 10;
         if (acertouResultado) return 5;

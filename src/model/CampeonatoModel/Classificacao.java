@@ -1,4 +1,8 @@
-package model;
+package model.CampeonatoModel;
+
+import model.PessoaModel.Aposta;
+import model.PessoaModel.Grupo;
+import model.PessoaModel.Participante;
 
 public class Classificacao {
     private Grupo grupo;

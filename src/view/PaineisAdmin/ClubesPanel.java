@@ -1,6 +1,8 @@
-package view;
+package view.PaineisAdmin;
 
-import model.*;
+import model.CampeonatoModel.Clube;
+import view.MainFrame;
+
 import javax.swing.*;
 import java.awt.*;
 
@@ -12,7 +14,6 @@ public class ClubesPanel extends JPanel {
     public ClubesPanel() {
         setLayout(new BorderLayout(10, 10));
 
-        // Formulário de cadastro
         JPanel form = new JPanel(new GridBagLayout());
         form.setBorder(BorderFactory.createTitledBorder("Cadastrar Clube"));
         GridBagConstraints g = new GridBagConstraints();
@@ -32,7 +33,6 @@ public class ClubesPanel extends JPanel {
         g.gridx = 0; g.gridy = 3; g.gridwidth = 2;
         form.add(btnCadastrar, g);
 
-        // Lista de clubes cadastrados
         listaModel = new DefaultListModel<>();
         JList<String> lista = new JList<>(listaModel);
         JScrollPane scroll = new JScrollPane(lista);
