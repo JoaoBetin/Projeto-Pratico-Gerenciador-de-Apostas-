@@ -71,6 +71,7 @@ public class MainFrame extends JFrame {
             abas.setEnabledAt(8, true);
             abas.setSelectedIndex(1);
         } else {
+            abas.setEnabledAt(3, true);
             abas.setEnabledAt(5, true);
             abas.setEnabledAt(6, true);
             abas.setEnabledAt(8, true);
