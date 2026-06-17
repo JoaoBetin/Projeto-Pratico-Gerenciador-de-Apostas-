@@ -1,18 +1,17 @@
 package view.PainelAmbos;
 
-import model.CampeonatoModel.*;
+import dao.GrupoDAO;
 import model.PessoaModel.*;
-import view.MainFrame;
-import view.PaineisAdmin.*;
-import view.PainelUser.*;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.List;
 
 public class GrupoPanel extends JPanel {
 
     private JTextField campoNomeGrupo;
     private DefaultListModel<String> listaModel;
+    private final GrupoDAO grupoDAO = new GrupoDAO();
 
     public GrupoPanel() {
         setLayout(new BorderLayout(10, 10));
@@ -34,6 +33,15 @@ public class GrupoPanel extends JPanel {
         add(scroll, BorderLayout.CENTER);
 
         btnCriar.addActionListener(e -> criarGrupo());
+
+        carregarGruposExistentes();
+    }
+
+    private void carregarGruposExistentes() {
+        List<Grupo> grupos = grupoDAO.listarTodos();
+        for (Grupo g : grupos) {
+            listaModel.addElement(g.toString());
+        }
     }
 
     private void criarGrupo() {
@@ -41,11 +49,11 @@ public class GrupoPanel extends JPanel {
         if (nome.isEmpty()) {
             JOptionPane.showMessageDialog(this, "Digite o nome do grupo."); return;
         }
-        if (MainFrame.totalGrupos >= 5) {
+        if (grupoDAO.contarTotal() >= 5) {
             JOptionPane.showMessageDialog(this, "Limite de 5 grupos atingido."); return;
         }
         Grupo novo = new Grupo(nome);
-        MainFrame.grupos[MainFrame.totalGrupos++] = novo;
+        grupoDAO.inserir(novo);
         listaModel.addElement(novo.toString());
         campoNomeGrupo.setText("");
         JOptionPane.showMessageDialog(this, "Grupo '" + nome + "' criado!");

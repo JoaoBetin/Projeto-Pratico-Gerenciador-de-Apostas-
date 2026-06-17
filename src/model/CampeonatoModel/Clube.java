@@ -3,6 +3,7 @@ package model.CampeonatoModel;
 import java.util.Objects;
 
 public class Clube {
+    private int id;
     private String nome;
     private String sigla;
     private String cidade;
@@ -16,6 +17,14 @@ public class Clube {
         this.cidade = cidade;
     }
 
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
     public String getNome() {
         return nome;
     }
@@ -26,6 +35,10 @@ public class Clube {
 
     public String getSigla() {
         return sigla;
+    }
+
+    public String getCidade() {
+        return cidade;
     }
 
     @Override

@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 
 public class Partida {
 
+    private int id;
     private Clube clubeMandante;
     private Clube clubeVisitante;
     private LocalDateTime dataHora;
@@ -47,6 +48,11 @@ public class Partida {
         return "empate";
     }
 
+    public int getId()                       { return id; }
+    public void setId(int id)                { this.id = id; }
+    public Clube getClubeMandante()          { return clubeMandante; }
+    public Clube getClubeVisitante()         { return clubeVisitante; }
+    public LocalDateTime getDataHora()       { return dataHora; }
     public int getGolsMandante()       { return golsMandante; }
     public int getGolsVisitante()      { return golsVisitante; }
     public boolean isEncerrada()       { return encerrada; }

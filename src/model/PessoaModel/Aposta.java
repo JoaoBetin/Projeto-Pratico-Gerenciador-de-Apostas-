@@ -4,6 +4,7 @@ import interfaces.Pontuavel;
 import model.CampeonatoModel.Partida;
 
 public class Aposta implements Pontuavel {
+    private int id;
     private Participante participante;
     private Partida partida;
     private String resultadoPrevisto;
@@ -40,6 +41,11 @@ public class Aposta implements Pontuavel {
         return 0;
     }
 
+    public int getId()                       { return id; }
+    public void setId(int id)                { this.id = id; }
+    public int getGolsMandantePrevisto()     { return golsMandantePrevisto; }
+    public int getGolsVisitantePrevisto()    { return golsVisitantePrevisto; }
+    public String getResultadoPrevisto()     { return resultadoPrevisto; }
 
     public Participante getParticipante() {
         return participante;

@@ -18,6 +18,8 @@ public class Participante extends Pessoa {
     public int getPontuacao()          { return pontuacao; }
     public void setPontuacao(int pts) { this.pontuacao += pts; }
 
+    public void setPontuacaoAbsoluta(int pts) { this.pontuacao = pts; }
+
     @Override
     public String toString() {
         return getNome() + " | Pontos: " + pontuacao;

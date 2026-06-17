@@ -2,18 +2,22 @@ package view.PainelUser;
 
 import javax.swing.*;
 import java.awt.*;
-import model.CampeonatoModel.*;
+import java.util.ArrayList;
+import java.util.List;
+
+import dao.GrupoDAO;
 import model.PessoaModel.*;
 import view.MainFrame;
-import view.PaineisAdmin.*;
-import view.PainelAmbos.*;
-
 
 public class MeusGruposPanel extends JPanel {
 
     private DefaultListModel<String> listaTodosModel;
     private DefaultListModel<String> listaMeusModel;
     private JList<String> listaTodos;
+
+    private final GrupoDAO grupoDAO = new GrupoDAO();
+
+    private List<Grupo> gruposCarregados;
 
     public MeusGruposPanel() {
         setLayout(new BorderLayout(10, 10));
@@ -49,8 +53,9 @@ public class MeusGruposPanel extends JPanel {
 
     private void carregarGrupos() {
         listaTodosModel.clear();
-        for (int i = 0; i < MainFrame.totalGrupos; i++) {
-            Grupo g = MainFrame.grupos[i];
+        gruposCarregados = grupoDAO.listarTodos();
+        for (int i = 0; i < gruposCarregados.size(); i++) {
+            Grupo g = gruposCarregados.get(i);
             listaTodosModel.addElement(i + " — " + g.getNome()
                     + " (" + g.getTotalParticipantes() + "/5)");
         }
@@ -66,18 +71,20 @@ public class MeusGruposPanel extends JPanel {
 
         String item = listaTodosModel.getElementAt(listaTodos.getSelectedIndex());
         int idx = Integer.parseInt(item.split(" — ")[0]);
-        Grupo grupo = MainFrame.grupos[idx];
+        Grupo grupo = gruposCarregados.get(idx);
         Participante p = (Participante) MainFrame.usuarioLogado;
 
         if (grupo.estaLotado()) {
             JOptionPane.showMessageDialog(this, "Grupo cheio (máx. 5 participantes)."); return;
         }
 
-        boolean entrou = grupo.adicionarParticipante(p);
+        boolean entrou = grupoDAO.adicionarParticipante(grupo.getId(), p.getId());
 
         if (!entrou) {
             JOptionPane.showMessageDialog(this, "Você já está neste grupo."); return;
         }
+
+        grupo.adicionarParticipante(p);
 
         listaMeusModel.addElement(grupo.getNome());
         listaTodosModel.set(listaTodos.getSelectedIndex(),

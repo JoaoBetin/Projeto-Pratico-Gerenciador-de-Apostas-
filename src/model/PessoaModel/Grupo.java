@@ -1,6 +1,7 @@
 package model.PessoaModel;
 
 public class Grupo {
+    private int id;
     private String nome;
     private Participante[] participantes;
     private int totalParticipantes;
@@ -34,6 +35,8 @@ public class Grupo {
         return resultado;
     }
 
+    public int getId()                { return id; }
+    public void setId(int id)         { this.id = id; }
     public String getNome()           { return nome; }
     public void setNome(String nome)  { this.nome = nome; }
     public int getTotalParticipantes(){ return totalParticipantes; }

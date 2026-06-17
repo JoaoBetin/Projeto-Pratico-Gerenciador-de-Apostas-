@@ -1,13 +1,16 @@
 package view.PaineisAdmin;
 
+import dao.CampeonatoDAO;
+import dao.ClubeDAO;
+import dao.PartidaDAO;
 import model.CampeonatoModel.Campeonato;
 import model.CampeonatoModel.Clube;
 import model.CampeonatoModel.Partida;
-import view.MainFrame;
 
 import javax.swing.*;
 import java.awt.*;
 import java.time.LocalDateTime;
+import java.util.List;
 
 public class CampeonatoPanel extends JPanel {
 
@@ -16,6 +19,14 @@ public class CampeonatoPanel extends JPanel {
     private JComboBox<String> comboMandante, comboVisitante;
     private JTextField campoData, campoHora;
     private DefaultListModel<String> listaModel;
+
+    private final CampeonatoDAO campeonatoDAO = new CampeonatoDAO();
+    private final ClubeDAO clubeDAO = new ClubeDAO();
+    private final PartidaDAO partidaDAO = new PartidaDAO();
+
+    private List<Clube> clubesCarregados;
+
+    private List<Campeonato> campeonatosCarregados;
 
     public CampeonatoPanel() {
         setLayout(new BorderLayout(10, 10));
@@ -79,6 +90,23 @@ public class CampeonatoPanel extends JPanel {
         btnCriar.addActionListener(e -> criarCampeonato());
         btnCarregarClubes.addActionListener(e -> carregarClubes());
         btnPartida.addActionListener(e -> cadastrarPartida());
+
+        carregarCampeonatosExistentes();
+        carregarPartidasExistentes();
+    }
+
+    private void carregarCampeonatosExistentes() {
+        campeonatosCarregados = campeonatoDAO.listarTodos();
+        for (Campeonato c : campeonatosCarregados) {
+            comboCampeonato.addItem(c.getNome());
+        }
+    }
+
+    private void carregarPartidasExistentes() {
+        List<Partida> partidas = partidaDAO.listarTodas();
+        for (Partida p : partidas) {
+            listaModel.addElement("[" + p.getCampeonato().getNome() + "] " + p.toString());
+        }
     }
 
     private void criarCampeonato() {
@@ -86,11 +114,12 @@ public class CampeonatoPanel extends JPanel {
         if (nome.isEmpty()) {
             JOptionPane.showMessageDialog(this, "Digite o nome."); return;
         }
-        if (MainFrame.totalCampeonatos >= 10) {
+        if (campeonatoDAO.contarTotal() >= 10) {
             JOptionPane.showMessageDialog(this, "Limite de campeonatos atingido."); return;
         }
         Campeonato c = new Campeonato(nome);
-        MainFrame.campeonatos[MainFrame.totalCampeonatos++] = c;
+        campeonatoDAO.inserir(c);
+        campeonatosCarregados.add(c);
         comboCampeonato.addItem(nome);
         campoNome.setText("");
         JOptionPane.showMessageDialog(this, "Campeonato '" + nome + "' criado!");
@@ -99,9 +128,10 @@ public class CampeonatoPanel extends JPanel {
     private void carregarClubes() {
         comboMandante.removeAllItems();
         comboVisitante.removeAllItems();
-        for (int i = 0; i < MainFrame.totalClubes; i++) {
-            comboMandante.addItem(MainFrame.clubes[i].getSigla());
-            comboVisitante.addItem(MainFrame.clubes[i].getSigla());
+        clubesCarregados = clubeDAO.listarTodos();
+        for (Clube c : clubesCarregados) {
+            comboMandante.addItem(c.getSigla());
+            comboVisitante.addItem(c.getSigla());
         }
     }
 
@@ -114,9 +144,9 @@ public class CampeonatoPanel extends JPanel {
         }
         try {
             int idxCamp     = comboCampeonato.getSelectedIndex();
-            Campeonato camp = MainFrame.campeonatos[idxCamp];
-            Clube mandante  = MainFrame.clubes[comboMandante.getSelectedIndex()];
-            Clube visitante = MainFrame.clubes[comboVisitante.getSelectedIndex()];
+            Campeonato camp = campeonatosCarregados.get(idxCamp);
+            Clube mandante  = clubesCarregados.get(comboMandante.getSelectedIndex());
+            Clube visitante = clubesCarregados.get(comboVisitante.getSelectedIndex());
 
             String[] partesData = campoData.getText().split("/");
             String[] partesHora = campoHora.getText().split(":");
@@ -127,7 +157,7 @@ public class CampeonatoPanel extends JPanel {
             );
 
             Partida p = new Partida(mandante, visitante, dt, camp);
-            MainFrame.partidas[MainFrame.totalPartidas++] = p;
+            partidaDAO.inserir(p);
             listaModel.addElement("[" + camp.getNome() + "] " + p.toString()
                     + " — " + campoData.getText() + " " + campoHora.getText());
 

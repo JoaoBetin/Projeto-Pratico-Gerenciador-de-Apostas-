@@ -1,11 +1,9 @@
 package view.PainelAmbos;
 
-import model.CampeonatoModel.*;
+import dao.AdministradorDAO;
+import dao.ParticipanteDAO;
 import model.PessoaModel.*;
 import view.MainFrame;
-import view.PaineisAdmin.*;
-import view.PainelAmbos.*;
-import view.PainelUser.*;
 
 import javax.swing.*;
 import java.awt.*;
@@ -15,6 +13,9 @@ public class LoginPanel extends JPanel {
     private MainFrame frame;
     private JTextField campoEmail;
     private JPasswordField campoSenha;
+
+    private final AdministradorDAO administradorDAO = new AdministradorDAO();
+    private final ParticipanteDAO participanteDAO = new ParticipanteDAO();
 
     public LoginPanel(MainFrame frame) {
         this.frame = frame;
@@ -53,19 +54,16 @@ public class LoginPanel extends JPanel {
             return;
         }
 
-        for (Administrador admin : MainFrame.administradores) {
-            if (admin != null && admin.autenticar(email, senha)) {
-                frame.onLogin(admin);
-                return;
-            }
+        Administrador admin = administradorDAO.buscarPorEmailSenha(email, senha);
+        if (admin != null) {
+            frame.onLogin(admin);
+            return;
         }
 
-        for (int i = 0; i < MainFrame.totalParticipantes; i++) {
-            Participante p = MainFrame.participantes[i];
-            if (p.autenticar(email, senha)) {
-                frame.onLogin(p);
-                return;
-            }
+        Participante participante = participanteDAO.buscarPorEmailSenha(email, senha);
+        if (participante != null) {
+            frame.onLogin(participante);
+            return;
         }
 
         JOptionPane.showMessageDialog(this,

@@ -1,17 +1,17 @@
 package view.PaineisAdmin;
 
+import dao.ParticipanteDAO;
+import model.PessoaModel.Participante;
+
 import javax.swing.*;
 import java.awt.*;
-import model.CampeonatoModel.*;
-import model.PessoaModel.*;
-import view.MainFrame;
-import view.PainelAmbos.*;
-import view.PainelUser.*;
+import java.util.List;
 
 public class UsuariosPanel extends JPanel {
 
     private JTextField campoNome, campoEmail, campoSenha;
     private DefaultListModel<String> listaModel;
+    private final ParticipanteDAO participanteDAO = new ParticipanteDAO();
 
     public UsuariosPanel() {
         setLayout(new BorderLayout(10, 10));
@@ -47,6 +47,15 @@ public class UsuariosPanel extends JPanel {
         add(scroll, BorderLayout.CENTER);
 
         btnCadastrar.addActionListener(e -> cadastrar());
+
+        carregarUsuariosExistentes();
+    }
+
+    private void carregarUsuariosExistentes() {
+        List<Participante> participantes = participanteDAO.listarTodos();
+        for (Participante p : participantes) {
+            listaModel.addElement(p.getNome() + " — " + p.getEmail());
+        }
     }
 
     private void cadastrar() {
@@ -57,18 +66,16 @@ public class UsuariosPanel extends JPanel {
         if (nome.isEmpty() || email.isEmpty() || senha.isEmpty()) {
             JOptionPane.showMessageDialog(this, "Preencha todos os campos."); return;
         }
-        if (MainFrame.totalParticipantes >= 50) {
+        if (participanteDAO.contarTotal() >= 50) {
             JOptionPane.showMessageDialog(this, "Limite de usuários atingido."); return;
         }
 
-        for (int i = 0; i < MainFrame.totalParticipantes; i++) {
-            if (MainFrame.participantes[i].getEmail().equalsIgnoreCase(email)) {
-                JOptionPane.showMessageDialog(this, "Email já cadastrado."); return;
-            }
+        if (participanteDAO.buscarPorEmail(email) != null) {
+            JOptionPane.showMessageDialog(this, "Email já cadastrado."); return;
         }
 
         Participante p = new Participante(nome, email, senha);
-        MainFrame.participantes[MainFrame.totalParticipantes++] = p;
+        participanteDAO.inserir(p);
         listaModel.addElement(p.getNome() + " — " + p.getEmail());
 
         campoNome.setText("");

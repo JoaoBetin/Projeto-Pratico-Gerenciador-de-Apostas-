@@ -7,5 +7,13 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="module-library">
+      <library name="h2">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/lib/h2-2.4.240.jar!/" />
+        </CLASSES>
+        <SOURCES />
+      </library>
+    </orderEntry>
   </component>
 </module>

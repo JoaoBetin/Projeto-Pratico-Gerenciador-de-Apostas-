@@ -1,14 +1,16 @@
 package view.PainelUser;
 
+import dao.ApostaDAO;
+import dao.CampeonatoDAO;
+import dao.PartidaDAO;
 import model.CampeonatoModel.*;
 import model.PessoaModel.*;
 import view.MainFrame;
-import view.PaineisAdmin.*;
-import view.PainelAmbos.*;
-
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ApostasPanel extends JPanel {
 
@@ -16,6 +18,14 @@ public class ApostasPanel extends JPanel {
     private JComboBox<String> comboPartida;
     private JTextField campoGolsMandante, campoGolsVisitante;
     private DefaultListModel<String> listaModel;
+
+    private final CampeonatoDAO campeonatoDAO = new CampeonatoDAO();
+    private final PartidaDAO partidaDAO = new PartidaDAO();
+    private final ApostaDAO apostaDAO = new ApostaDAO();
+
+    private List<Campeonato> campeonatosCarregados;
+
+    private List<Partida> partidasCarregadas;
 
     public ApostasPanel() {
         setLayout(new BorderLayout(10, 10));
@@ -66,8 +76,9 @@ public class ApostasPanel extends JPanel {
 
     private void carregarCampeonatos() {
         comboCampeonato.removeAllItems();
-        for (int i = 0; i < MainFrame.totalCampeonatos; i++) {
-            comboCampeonato.addItem(MainFrame.campeonatos[i].getNome());
+        campeonatosCarregados = campeonatoDAO.listarTodos();
+        for (Campeonato c : campeonatosCarregados) {
+            comboCampeonato.addItem(c.getNome());
         }
         if (comboCampeonato.getItemCount() == 0) {
             JOptionPane.showMessageDialog(this, "Nenhum campeonato cadastrado.");
@@ -80,13 +91,16 @@ public class ApostasPanel extends JPanel {
             JOptionPane.showMessageDialog(this, "Selecione um campeonato primeiro."); return;
         }
         int idxCamp = comboCampeonato.getSelectedIndex();
-        Campeonato camp = MainFrame.campeonatos[idxCamp];
+        Campeonato camp = campeonatosCarregados.get(idxCamp);
+
+        partidasCarregadas = new ArrayList<>();
+        List<Partida> todasPartidas = partidaDAO.listarTodas();
 
         int encontradas = 0;
-        for (int i = 0; i < MainFrame.totalPartidas; i++) {
-            Partida p = MainFrame.partidas[i];
+        for (Partida p : todasPartidas) {
             if (p.getCampeonato().equals(camp) && p.aceitaAposta()) {
-                comboPartida.addItem(i + " — " + p.toString());
+                comboPartida.addItem(partidasCarregadas.size() + " — " + p.toString());
+                partidasCarregadas.add(p);
                 encontradas++;
             }
         }
@@ -106,7 +120,7 @@ public class ApostasPanel extends JPanel {
             int gM = Integer.parseInt(campoGolsMandante.getText().trim());
             int gV = Integer.parseInt(campoGolsVisitante.getText().trim());
 
-            Partida partida = MainFrame.partidas[idx];
+            Partida partida = partidasCarregadas.get(idx);
 
             if (!partida.aceitaAposta()) {
                 JOptionPane.showMessageDialog(this,
@@ -115,7 +129,7 @@ public class ApostasPanel extends JPanel {
 
             Participante p = (Participante) MainFrame.usuarioLogado;
             Aposta aposta = new Aposta(p, partida, gM, gV);
-            MainFrame.apostas[MainFrame.totalApostas++] = aposta;
+            apostaDAO.inserir(aposta);
             listaModel.addElement(aposta.toString());
 
             campoGolsMandante.setText("");

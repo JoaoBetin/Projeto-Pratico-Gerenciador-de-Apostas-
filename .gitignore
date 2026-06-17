@@ -4,6 +4,15 @@ out/
 !**/src/test/**/out/
 .kotlin
 
+### Banco de dados H2 ###
+/bancodados/
+*.mv.db
+*.trace.db
+*.lock.db
+
+### Driver H2 (baixar manualmente, ver README) ###
+/lib/*.jar
+
 ### Eclipse ###
 .apt_generated
 .classpath

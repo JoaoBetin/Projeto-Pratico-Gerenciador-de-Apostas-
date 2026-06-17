@@ -1,15 +1,17 @@
 package view.PaineisAdmin;
 
+import dao.ClubeDAO;
 import model.CampeonatoModel.Clube;
-import view.MainFrame;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.List;
 
 public class ClubesPanel extends JPanel {
 
     private JTextField campoNome, campoSigla, campoCidade;
     private DefaultListModel<String> listaModel;
+    private final ClubeDAO clubeDAO = new ClubeDAO();
 
     public ClubesPanel() {
         setLayout(new BorderLayout(10, 10));
@@ -42,6 +44,15 @@ public class ClubesPanel extends JPanel {
         add(scroll, BorderLayout.CENTER);
 
         btnCadastrar.addActionListener(e -> cadastrarClube());
+
+        carregarClubesExistentes();
+    }
+
+    private void carregarClubesExistentes() {
+        List<Clube> clubes = clubeDAO.listarTodos();
+        for (Clube c : clubes) {
+            listaModel.addElement(c.toString());
+        }
     }
 
     private void cadastrarClube() {
@@ -53,13 +64,13 @@ public class ClubesPanel extends JPanel {
             JOptionPane.showMessageDialog(this, "Preencha todos os campos.");
             return;
         }
-        if (MainFrame.totalClubes >= 8) {
+        if (clubeDAO.contarTotal() >= 8) {
             JOptionPane.showMessageDialog(this, "Limite de 8 clubes atingido.");
             return;
         }
 
         Clube c = new Clube(nome, sigla, cidade);
-        MainFrame.clubes[MainFrame.totalClubes++] = c;
+        clubeDAO.inserir(c);
         listaModel.addElement(c.toString());
 
         campoNome.setText("");

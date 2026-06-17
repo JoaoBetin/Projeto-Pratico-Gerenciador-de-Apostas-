@@ -1,32 +1,16 @@
 package view;
 
-import model.CampeonatoModel.*;
 import model.PessoaModel.*;
+import util.ConexaoBD;
 import view.PaineisAdmin.*;
 import view.PainelAmbos.*;
 import view.PainelUser.*;
 
 import javax.swing.*;
-import java.awt.*;
 
 public class MainFrame extends JFrame {
 
-    public static Clube[]         clubes           = new Clube[8];
-    public static int             totalClubes      = 0;
-    public static Campeonato[]    campeonatos      = new Campeonato[10];
-    public static int             totalCampeonatos = 0;
-    public static Partida[]       partidas         = new Partida[100];
-    public static int             totalPartidas    = 0;
-    public static Grupo[]         grupos           = new Grupo[5];
-    public static int             totalGrupos      = 0;
-    public static Aposta[]        apostas          = new Aposta[200];
-    public static int             totalApostas     = 0;
-    public static Pessoa          usuarioLogado    = null;
-    public static Participante[]  participantes    = new Participante[50];
-    public static int             totalParticipantes = 0;
-    public static Administrador[] administradores  = {
-            new Administrador("Admin", "admin@admin.com", "1234")
-    };
+    public static Pessoa usuarioLogado = null;
 
     private JTabbedPane abas;
 
@@ -80,6 +64,7 @@ public class MainFrame extends JFrame {
     }
 
     public static void main(String[] args) {
+        ConexaoBD.inicializarBanco();
         SwingUtilities.invokeLater(MainFrame::new);
     }
 }

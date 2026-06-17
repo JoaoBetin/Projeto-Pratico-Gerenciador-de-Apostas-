@@ -1,18 +1,32 @@
 package view.PaineisAdmin;
 
+import dao.ApostaDAO;
+import dao.CampeonatoDAO;
+import dao.ParticipanteDAO;
+import dao.PartidaDAO;
 import model.CampeonatoModel.Campeonato;
 import model.CampeonatoModel.Partida;
 import model.PessoaModel.Aposta;
-import view.MainFrame;
+import model.PessoaModel.Participante;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ResultadosPanel extends JPanel {
 
     private JComboBox<String> comboCampeonato;
     private JComboBox<String> comboPartida;
     private JTextField campoGolsMandante, campoGolsVisitante;
+
+    private final CampeonatoDAO campeonatoDAO = new CampeonatoDAO();
+    private final PartidaDAO partidaDAO = new PartidaDAO();
+    private final ApostaDAO apostaDAO = new ApostaDAO();
+    private final ParticipanteDAO participanteDAO = new ParticipanteDAO();
+
+    private List<Campeonato> campeonatosCarregados;
+    private List<Partida> partidasCarregadas;
 
     public ResultadosPanel() {
         setLayout(new BorderLayout(10, 10));
@@ -59,8 +73,9 @@ public class ResultadosPanel extends JPanel {
 
     private void carregarCampeonatos() {
         comboCampeonato.removeAllItems();
-        for (int i = 0; i < MainFrame.totalCampeonatos; i++) {
-            comboCampeonato.addItem(MainFrame.campeonatos[i].getNome());
+        campeonatosCarregados = campeonatoDAO.listarTodos();
+        for (Campeonato c : campeonatosCarregados) {
+            comboCampeonato.addItem(c.getNome());
         }
         if (comboCampeonato.getItemCount() == 0) {
             JOptionPane.showMessageDialog(this, "Nenhum campeonato cadastrado.");
@@ -73,13 +88,16 @@ public class ResultadosPanel extends JPanel {
             JOptionPane.showMessageDialog(this, "Selecione um campeonato primeiro."); return;
         }
         int idxCamp = comboCampeonato.getSelectedIndex();
-        Campeonato camp = MainFrame.campeonatos[idxCamp];
+        Campeonato camp = campeonatosCarregados.get(idxCamp);
+
+        partidasCarregadas = new ArrayList<>();
+        List<Partida> todasPartidas = partidaDAO.listarTodas();
 
         int encontradas = 0;
-        for (int i = 0; i < MainFrame.totalPartidas; i++) {
-            Partida p = MainFrame.partidas[i];
+        for (Partida p : todasPartidas) {
             if (p.getCampeonato().equals(camp) && !p.isEncerrada()) {
-                comboPartida.addItem(i + " — " + p.toString());
+                comboPartida.addItem(partidasCarregadas.size() + " — " + p.toString());
+                partidasCarregadas.add(p);
                 encontradas++;
             }
         }
@@ -99,14 +117,16 @@ public class ResultadosPanel extends JPanel {
             int gM = Integer.parseInt(campoGolsMandante.getText().trim());
             int gV = Integer.parseInt(campoGolsVisitante.getText().trim());
 
-            MainFrame.partidas[idx].registrarResultado(gM, gV);
+            Partida partida = partidasCarregadas.get(idx);
+            partida.registrarResultado(gM, gV);
+            partidaDAO.atualizarResultado(partida);
 
-            for (int i = 0; i < MainFrame.totalApostas; i++) {
-                Aposta a = MainFrame.apostas[i];
-                if (a.getPartida() == MainFrame.partidas[idx]) {
-                    int pontos = a.calcularPontos(a.getPartida());
-                    a.getParticipante().setPontuacao(pontos);
-                }
+            List<Aposta> apostasDaPartida = apostaDAO.listarPorPartida(partida.getId());
+            for (Aposta a : apostasDaPartida) {
+                int pontos = a.calcularPontos(partida);
+                Participante participante = a.getParticipante();
+                participante.setPontuacao(pontos);
+                participanteDAO.atualizarPontuacao(participante);
             }
 
             JOptionPane.showMessageDialog(this,

@@ -1,6 +1,7 @@
 package model.PessoaModel;
 
 public abstract class Pessoa {
+    private int id;
     private String nome;
     private String email;
     private String senha;
@@ -16,6 +17,14 @@ public abstract class Pessoa {
         this.permissao = permissao;
     }
 
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
     public String getNome() {
         return nome;
     }
@@ -26,6 +35,18 @@ public abstract class Pessoa {
 
     public String getEmail() {
         return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getSenha() {
+        return senha;
+    }
+
+    public void setSenha(String senha) {
+        this.senha = senha;
     }
 
     public void setPermissao(Permissao permissao) {

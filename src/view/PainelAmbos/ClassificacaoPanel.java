@@ -1,16 +1,24 @@
 package view.PainelAmbos;
 
+import dao.GrupoDAO;
+import dao.PartidaDAO;
 import model.CampeonatoModel.Classificacao;
+import model.CampeonatoModel.Partida;
 import model.PessoaModel.Grupo;
-import view.MainFrame;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.List;
 
 public class ClassificacaoPanel extends JPanel {
 
     private JComboBox<String> comboGrupos;
     private JTextArea areaRanking;
+
+    private final GrupoDAO grupoDAO = new GrupoDAO();
+    private final PartidaDAO partidaDAO = new PartidaDAO();
+
+    private List<Grupo> gruposCarregados;
 
     public ClassificacaoPanel() {
         setLayout(new BorderLayout(10, 10));
@@ -37,8 +45,9 @@ public class ClassificacaoPanel extends JPanel {
 
     private void carregarGrupos() {
         comboGrupos.removeAllItems();
-        for (int i = 0; i < MainFrame.totalGrupos; i++) {
-            comboGrupos.addItem(MainFrame.grupos[i].getNome());
+        gruposCarregados = grupoDAO.listarTodos();
+        for (Grupo g : gruposCarregados) {
+            comboGrupos.addItem(g.getNome());
         }
     }
 
@@ -47,9 +56,13 @@ public class ClassificacaoPanel extends JPanel {
             areaRanking.setText("Nenhum grupo disponível."); return;
         }
         int idx = comboGrupos.getSelectedIndex();
-        Grupo grupo = MainFrame.grupos[idx];
+        Grupo grupo = gruposCarregados.get(idx);
+
+        List<Partida> partidas = partidaDAO.listarTodas();
+        Partida[] partidasArray = partidas.toArray(new Partida[0]);
+
         Classificacao c = new Classificacao(
-                grupo, MainFrame.partidas, MainFrame.totalPartidas);
+                grupo, partidasArray, partidasArray.length);
         areaRanking.setText(c.getRankingFormatado());
     }
 }
